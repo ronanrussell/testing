@@ -5,62 +5,177 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Countdown Timer</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style id="season-style">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             height: 100vh;
-            background-color: #FFF5E1; /* Default to fall colors */
+            background-color: #FFF5E1;
             color: #5D3A00;
             font-family: 'Press Start 2P', cursive;
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            overflow: hidden;
         }
-        .timer {
+        .container {
             text-align: center;
-            width: 100%;
-            max-width: 400px;
+            width: 70%;
+            max-width: 1200px;
+        }
+        .days-since {
+            font-size: 1.5em;
+            margin-bottom: 50px;
+       
         }
         .time {
-            font-size: 3em; /* Adjusted font size for mobile */
-            margin-bottom: 20px;
+            font-size: 3em;
+            margin-bottom: 40px;
+            word-wrap: break-word;
+        }
+
+
+
+.home {
+    font-size: 0.7em;
+    margin-top: 100px;
+    text-decoration: none;
+  
+}
+
+a:visited {
+  	color: #333;
+   	text-decoration: none;
+	cursor: default; 
+}
+
+a {
+  	color: #333;
+   	text-decoration: none;
+	cursor: default; 
+}
+
+        .progress-bar-container {
+            width: 100%;
+            height: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 50px;
+            padding: 2px;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #FFB085;
+            width: 0;
+            border-radius: 10px;
+        }
+        .time-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* Seasonal Styles */
+        .christmas {
+            background-color: #FFEBEB;
+            color: #B22222;
+        }
+        .spring {
+            background-color: #E3F9E5;
+            color: #2E8B57;
+        }
+        .summer {
+            background-color: #E0FFFF;
+            color: #2F4F4F;
+        }
+        .fall {
+            background-color: #FFF5E1;
+            color: #5D3A00;
+        }
+        .winter {
+            background-color: #F0F8FF;
+            color: #4682B4;
+        }
+        .icon-pattern {
+		
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.95;
+            animation: moveBackground 30s linear infinite;
+        }
+        .icon-pattern i {
+            font-size: 40px;
+            opacity: 0.06;
+            position: absolute;
+        }
+        @keyframes moveBackground {
+            0% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(30px, 50%);
+            }
+            100% {
+                transform: translate(0, 100%);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="timer">
-        <div class="time" id="time">Loading...</div>
+    <div class="icon-pattern" id="icon-pattern"></div>
+    <div class="container">
+        <div class="days-since" id="days-since"></div>
+        
+        <div class="time" id="time" onclick="toggleFormat()">Loading...</div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+</div>
+
+<div class="home" id="home"><a href="index.html">Home</a></div>
     </div>
 
     <script>
-        let countdown;
-        let targetDate;
+        let countdown, startDate, targetDate, isDetailedFormat = false;
 
         function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
+            return new URLSearchParams(window.location.search).get(param);
         }
 
         function startCountdown() {
-            targetDate = new Date(getQueryParam('date'));
+            startDate = new Date(getQueryParam('start'));
+            targetDate = new Date(getQueryParam('end'));
             updateSeasonStyle(targetDate);
             countdown = setInterval(updateTimer, 1000);
-            document.getElementById('time').textContent = formatTime(targetDate - new Date());
+            updateTimer();
+            updateDaysSince();
         }
 
         function updateTimer() {
             const now = new Date();
             const timeLeft = targetDate - now;
+            const totalTime = targetDate - startDate;
+            const elapsedTime = now - startDate;
+            const progress = (elapsedTime / totalTime) * 100;
 
             if (timeLeft <= 0) {
                 clearInterval(countdown);
                 document.getElementById('time').textContent = '00:00:00:00';
+                document.getElementById('progress-bar').style.width = '100%';
+                document.getElementById('progress-bar').style.backgroundColor = '#00FF00';
                 return;
             }
 
-            document.getElementById('time').textContent = formatTime(timeLeft);
+            document.getElementById('time').innerHTML = formatTime(timeLeft);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-bar').style.backgroundColor = `rgb(${255 - (progress * 2.55)}, ${progress * 2.55}, 0)`;
         }
 
         function formatTime(timeLeft) {
@@ -69,44 +184,65 @@
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-            return `${days}:${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+            if (isDetailedFormat) {
+                return `
+                    <div class="time-vertical">
+                        <div>${days} Days</div>
+                        <div>${hours < 10 ? '0' + hours : hours} Hours</div>
+                        <div>${minutes < 10 ? '0' + minutes : minutes} Minutes</div>
+                        <div>${seconds < 10 ? '0' + seconds : seconds} Seconds</div>
+                    </div>
+                `;
+            } else {
+                return `${days}:${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+            }
+        }
+
+        function toggleFormat() {
+            isDetailedFormat = !isDetailedFormat;
+            updateTimer();
+        }
+
+        function updateDaysSince() {
+            const now = new Date();
+            const daysSince = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+            document.getElementById('days-since').textContent = daysSince >= 1 ? `Days since start: ${daysSince}` : '';
         }
 
         function updateSeasonStyle(date) {
             const month = date.getMonth() + 1;
             const day = date.getDate();
-            const style = document.getElementById('season-style');
+            const body = document.body;
+            const iconPattern = document.getElementById('icon-pattern');
+
+            body.classList.remove('christmas', 'spring', 'summer', 'fall', 'winter');
+            iconPattern.innerHTML = '';
+
+            let iconClass = '';
 
             if (month === 12 && day === 25) {
-                // Christmas Day
-                style.innerHTML = `
-                    body { background-color: #FFEBEB; color: #B22222; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; padding: 20px; box-sizing: border-box; }
-                    .time { font-size: 3em; margin-bottom: 20px; }
-                `;
+                body.classList.add('christmas');
+                iconClass = 'fa-snowflake';
             } else if (month >= 3 && month <= 5) {
-                // Spring
-                style.innerHTML = `
-                    body { background-color: #E3F9E5; color: #2E8B57; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; padding: 20px; box-sizing: border-box; }
-                    .time { font-size: 3em; margin-bottom: 20px; }
-                `;
+                body.classList.add('spring');
+                iconClass = 'fa-tree';
             } else if (month >= 6 && month <= 8) {
-                // Summer
-                style.innerHTML = `
-                    body { background-color: #E0FFFF; color: #2F4F4F; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; padding: 20px; box-sizing: border-box; }
-                    .time { font-size: 3em; margin-bottom: 20px; }
-                `;
+                body.classList.add('summer');
+                iconClass = 'fa-leaf';
             } else if (month >= 9 && month <= 11) {
-                // Fall
-                style.innerHTML = `
-                    body { background-color: #FFF5E1; color: #5D3A00; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; padding: 20px; box-sizing: border-box; }
-                    .time { font-size: 3em; margin-bottom: 20px; }
-                `;
+                body.classList.add('fall');
+                iconClass = 'fa-cloud';
             } else {
-                // Winter
-                style.innerHTML = `
-                    body { background-color: #F0F8FF; color: #4682B4; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; padding: 20px; box-sizing: border-box; }
-                    .time { font-size: 3em; margin-bottom: 20px; }
-                `;
+                body.classList.add('winter');
+                iconClass = 'fa-snowflake';
+            }
+
+            for (let i = 0; i < 100; i++) {
+                const icon = document.createElement('i');
+                icon.className = `fas ${iconClass}`;
+                icon.style.top = `${Math.random() * 100}%`;
+                icon.style.left = `${Math.random() * 100}%`;
+                iconPattern.appendChild(icon);
             }
         }
 
