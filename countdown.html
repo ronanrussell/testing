@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+
+<link rel="manifest" href="/manifest.json">
+
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style id="season-style">
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #FFF5E1; /* Default to fall colors */
+            color: #5D3A00;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+        }
+        .timer {
+            text-align: center;
+        }
+        .time {
+            font-size: 5em; /* Match the font size from Pomodoro timer */
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer">
+        <div class="time" id="time">Loading...</div>
+    </div>
+
+    <script>
+        let countdown;
+        let targetDate;
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function startCountdown() {
+            targetDate = new Date(getQueryParam('date'));
+            updateSeasonStyle(targetDate);
+            countdown = setInterval(updateTimer, 1000);
+            document.getElementById('time').textContent = formatTime(targetDate - new Date());
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const timeLeft = targetDate - now;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                document.getElementById('time').textContent = '00:00:00:00';
+                return;
+            }
+
+            document.getElementById('time').textContent = formatTime(timeLeft);
+        }
+
+        function formatTime(timeLeft) {
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            return `${days}:${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        }
+
+        function updateSeasonStyle(date) {
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const style = document.getElementById('season-style');
+
+            if (month === 12 && day === 25) {
+                // Christmas Day
+                style.innerHTML = `
+                    body { background-color: #FFEBEB; color: #B22222; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; }
+                    .time { font-size: 5em; margin-bottom: 20px; }
+                `;
+            } else if (month >= 3 && month <= 5) {
+                // Spring
+                style.innerHTML = `
+                    body { background-color: #E3F9E5; color: #2E8B57; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; }
+                    .time { font-size: 5em; margin-bottom: 20px; }
+                `;
+            } else if (month >= 6 && month <= 8) {
+                // Summer
+                style.innerHTML = `
+                    body { background-color: #E0FFFF; color: #2F4F4F; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; }
+                    .time { font-size: 5em; margin-bottom: 20px; }
+                `;
+            } else if (month >= 9 && month <= 11) {
+                // Fall
+                style.innerHTML = `
+                    body { background-color: #FFF5E1; color: #5D3A00; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; }
+                    .time { font-size: 5em; margin-bottom: 20px; }
+                `;
+            } else {
+                // Winter
+                style.innerHTML = `
+                    body { background-color: #F0F8FF; color: #4682B4; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; }
+                    .time { font-size: 5em; margin-bottom: 20px; }
+                `;
+            }
+        }
+
+        window.onload = startCountdown;
+    </script>
+</body>
+</html>
