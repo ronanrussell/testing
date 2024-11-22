@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Countdown Timer</title>
-
-<link rel="manifest" href="/manifest.json">
-
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style id="season-style">
         body {
@@ -18,12 +15,16 @@
             color: #5D3A00;
             font-family: 'Press Start 2P', cursive;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .timer {
             text-align: center;
+            width: 100%;
+            max-width: 400px;
         }
         .time {
-            font-size: 5em; /* Match the font size from Pomodoro timer */
+            font-size: 3em; /* Adjusted font size for mobile */
             margin-bottom: 20px;
         }
     </style>
@@ -79,32 +80,32 @@
             if (month === 12 && day === 25) {
                 // Christmas Day
                 style.innerHTML = `
-                    body { background-color: #FFEBEB; color: #B22222; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; }
-                    .time { font-size: 5em; margin-bottom: 20px; }
+                    body { background-color: #FFEBEB; color: #B22222; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; padding: 20px; box-sizing: border-box; }
+                    .time { font-size: 3em; margin-bottom: 20px; }
                 `;
             } else if (month >= 3 && month <= 5) {
                 // Spring
                 style.innerHTML = `
-                    body { background-color: #E3F9E5; color: #2E8B57; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; }
-                    .time { font-size: 5em; margin-bottom: 20px; }
+                    body { background-color: #E3F9E5; color: #2E8B57; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; padding: 20px; box-sizing: border-box; }
+                    .time { font-size: 3em; margin-bottom: 20px; }
                 `;
             } else if (month >= 6 && month <= 8) {
                 // Summer
                 style.innerHTML = `
-                    body { background-color: #E0FFFF; color: #2F4F4F; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; }
-                    .time { font-size: 5em; margin-bottom: 20px; }
+                    body { background-color: #E0FFFF; color: #2F4F4F; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; padding: 20px; box-sizing: border-box; }
+                    .time { font-size: 3em; margin-bottom: 20px; }
                 `;
             } else if (month >= 9 && month <= 11) {
                 // Fall
                 style.innerHTML = `
-                    body { background-color: #FFF5E1; color: #5D3A00; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; }
-                    .time { font-size: 5em; margin-bottom: 20px; }
+                    body { background-color: #FFF5E1; color: #5D3A00; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; padding: 20px; box-sizing: border-box; }
+                    .time { font-size: 3em; margin-bottom: 20px; }
                 `;
             } else {
                 // Winter
                 style.innerHTML = `
-                    body { background-color: #F0F8FF; color: #4682B4; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; }
-                    .time { font-size: 5em; margin-bottom: 20px; }
+                    body { background-color: #F0F8FF; color: #4682B4; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; margin: 0; padding: 20px; box-sizing: border-box; }
+                    .time { font-size: 3em; margin-bottom: 20px; }
                 `;
             }
         }
